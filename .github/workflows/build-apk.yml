@@ -51,6 +51,8 @@ jobs:
           fi
       - name: Build debug APK
         working-directory: ${{ env.PROJECT_DIR }}
+        env:
+          JAVA_OPTS: "-Xmx2g"
         run: |
           chmod +x ./gradlew
           ./gradlew --no-daemon --stacktrace :app:assembleDebug
