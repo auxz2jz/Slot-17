@@ -51,9 +51,10 @@ jobs:
           fi
       - name: Build debug APK
         working-directory: ${{ env.PROJECT_DIR }}
-        env:
-          JAVA_OPTS: "-Xmx2g"
         run: |
+          # Only update the temporary extracted launcher (not the source ZIP).
+          # The bundled custom gradlew script hardcodes -Xmx64m, which fails during checksum verification of Gradle 9.6.
+          sed -i "s/-Xmx64m/-Xmx2g/" ./gradlew
           chmod +x ./gradlew
           ./gradlew --no-daemon --stacktrace :app:assembleDebug
       - name: Verify APK and record checksum
