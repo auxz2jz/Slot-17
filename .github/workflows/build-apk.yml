@@ -19,6 +19,18 @@ jobs:
     steps:
       - name: Check out build repository
         uses: actions/checkout@v4
+      - name: Verify original v0.26.0 source archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive="source/PhotogrammetryStudioAndroid-v0.26.0-Distortion-Aware-Laser-3D-Android-Studio-Ready.zip"
+          test -f "$archive" || { echo "::error::Source ZIP missing. Upload the original v0.26.0 ZIP into the source/ folder of Slot-17."; exit 1; }
+          printf '%s  %s\n' '8a9155a10424dc6c255141c8a46ead78b826ba3bb566e639e33be9f5d4b5ea7e' "$archive" | sha256sum --check
+          unzip -tq "$archive"
+          mkdir -p "$RUNNER_TEMP/studio"
+          unzip -q "$archive" -d "$RUNNER_TEMP/studio"
+          test -f "$RUNNER_TEMP/studio/PhotogrammetryStudioAndroid_v0.26.0/settings.gradle.kts"
+          echo "PROJECT_DIR=$RUNNER_TEMP/studio/PhotogrammetryStudioAndroid_v0.26.0" >> "$GITHUB_ENV"
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
@@ -35,18 +47,6 @@ jobs:
           if [[ -d "$ANDROID_HOME/platforms/android-37.0" && ! -e "$ANDROID_HOME/platforms/android-37" ]]; then
             ln -s "$ANDROID_HOME/platforms/android-37.0" "$ANDROID_HOME/platforms/android-37"
           fi
-      - name: Verify original v0.26.0 source archive
-        shell: bash
-        run: |
-          set -euo pipefail
-          archive="source/PhotogrammetryStudioAndroid-v0.26.0-Distortion-Aware-Laser-3D-Android-Studio-Ready.zip"
-          test -f "$archive" || { echo "::error::Source ZIP missing. Upload the original v0.26.0 ZIP into the source/ folder of Slot-17."; exit 1; }
-          printf '%s  %s\n' '8a9155a10424dc6c255141c8a46ead78b826ba3bb566e639e33be9f5d4b5ea7e' "$archive" | sha256sum --check
-          unzip -tq "$archive"
-          mkdir -p "$RUNNER_TEMP/studio"
-          unzip -q "$archive" -d "$RUNNER_TEMP/studio"
-          test -f "$RUNNER_TEMP/studio/PhotogrammetryStudioAndroid_v0.26.0/settings.gradle.kts"
-          echo "PROJECT_DIR=$RUNNER_TEMP/studio/PhotogrammetryStudioAndroid_v0.26.0" >> "$GITHUB_ENV"
       - name: Build debug APK
         working-directory: ${{ env.PROJECT_DIR }}
         run: |
