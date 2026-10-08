@@ -33,11 +33,11 @@ jobs:
           unzip -q "$archive" -d "$RUNNER_TEMP/studio"
           test -f "$RUNNER_TEMP/studio/PhotogrammetryStudioAndroid_v0.26.0/settings.gradle.kts"
           echo "PROJECT_DIR=$RUNNER_TEMP/studio/PhotogrammetryStudioAndroid_v0.26.0" >> "$GITHUB_ENV"
-      - name: Set up Java 17
+      - name: Set up Java 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "17"
+          java-version: "21"
       - name: Install Android SDK
         uses: android-actions/setup-android@v3
         with:
