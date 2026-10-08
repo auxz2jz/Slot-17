@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "source/PhotogrammetryStudioAndroid-v0.26.0-Distortion-Aware-Laser-3D-Android-Studio-Ready.zip"
+      - "PhotogrammetryStudioAndroid-v0.26.0-Distortion-Aware-Laser-3D-Android-Studio-Ready.zip"
       - ".github/workflows/build-apk.yml"
   workflow_dispatch:
 
@@ -23,8 +24,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          archive="source/PhotogrammetryStudioAndroid-v0.26.0-Distortion-Aware-Laser-3D-Android-Studio-Ready.zip"
-          test -f "$archive" || { echo "::error::Source ZIP missing. Upload the original v0.26.0 ZIP into the source/ folder of Slot-17."; exit 1; }
+          archive="PhotogrammetryStudioAndroid-v0.26.0-Distortion-Aware-Laser-3D-Android-Studio-Ready.zip"
+          if [[ ! -f "$archive" ]]; then archive="source/$archive"; fi
+          test -f "$archive" || { echo "::error::Source ZIP missing in repository root or source/."; exit 1; }
           printf '%s  %s\n' '8a9155a10424dc6c255141c8a46ead78b826ba3bb566e639e33be9f5d4b5ea7e' "$archive" | sha256sum --check
           unzip -tq "$archive"
           mkdir -p "$RUNNER_TEMP/studio"
